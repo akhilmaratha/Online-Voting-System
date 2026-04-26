@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import PageTransition from "@/components/ui/PageTransition";
 import GlassCard from "@/components/ui/GlassCard";
@@ -13,9 +13,20 @@ import AnimatedButton from "@/components/ui/AnimatedButton";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+
+  useEffect(() => {
+    // If session exists and we're redirecting, go to dashboard
+    if (session && redirecting) {
+      const redirectUrl = session.user?.role === "admin" ? "/admin/dashboard" : "/voter/dashboard";
+      router.push(redirectUrl);
+      router.refresh();
+    }
+  }, [session, redirecting, router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -34,12 +45,7 @@ export default function LoginPage() {
     }
 
     toast.success("Welcome back.");
-    
-    // Wait for session to be established before redirecting
-    setTimeout(() => {
-      router.push("/voter/dashboard");
-      router.refresh();
-    }, 500);
+    setRedirecting(true);
   };
 
   return (
