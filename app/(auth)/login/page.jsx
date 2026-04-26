@@ -23,7 +23,6 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
-      callbackUrl: "/voter/dashboard",
     });
 
     setLoading(false);
@@ -35,14 +34,13 @@ export default function LoginPage() {
 
     toast.success("Welcome back.");
 
-    // Use a full navigation after auth so middleware reads the fresh session cookie in production.
-    const destinationUrl =
-      result?.url && typeof window !== "undefined"
-        ? new URL(result.url, window.location.origin).toString()
-        : "/voter/dashboard";
-    const destinationPath =
-      typeof window !== "undefined" ? new URL(destinationUrl, window.location.origin).pathname : "/voter/dashboard";
-    window.location.assign(destinationPath);
+
+    // Fetch session to know the role AFTER cookie is confirmed written
+    const session = await fetch("/api/auth/session").then((r) => r.json());
+    const role = session?.user?.role;
+
+    const destination = role === "admin" ? "/admin/dashboard" : "/voter/dashboard";
+    window.location.href = destination; // hard navigation, not assign()
   };
 
   return (
