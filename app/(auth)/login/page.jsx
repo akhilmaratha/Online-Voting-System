@@ -35,13 +35,12 @@ export default function LoginPage() {
     toast.success("Welcome back.");
 
 
-    // Fetch session to know the role AFTER cookie is confirmed written
-    const session = await fetch("/api/auth/session").then((r) => r.json());
+    const res = await fetch("/api/auth/session");
+    const session = await res.json();
     const role = session?.user?.role;
-
-    const destination = role === "admin" ? "/admin/dashboard" : "/voter/dashboard";
-    window.location.href = destination; // hard navigation, not assign()
-  };
+  
+    window.location.href = role === "admin" ? "/admin/dashboard" : "/voter/dashboard";
+    };
 
   return (
     <PageTransition className="relative min-h-screen auth-grid-bg">
