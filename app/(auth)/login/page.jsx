@@ -27,16 +27,19 @@ export default function LoginPage() {
       redirect: false,
     });
 
-    setLoading(false);
-
     if (result?.error) {
+      setLoading(false);
       toast.error("Invalid email or password.");
       return;
     }
 
     toast.success("Welcome back.");
-    router.push("/voter/dashboard");
-    router.refresh();
+    
+    // Wait for session to be established before redirecting
+    setTimeout(() => {
+      router.push("/voter/dashboard");
+      router.refresh();
+    }, 500);
   };
 
   return (
@@ -50,7 +53,7 @@ export default function LoginPage() {
           className="w-full"
         >
           <GlassCard className="p-7 sm:p-8">
-            <p className="text-xs uppercase tracking-[0.26em] text-[var(--accent)]">Secure Access</p>
+            <p className="text-xs uppercase tracking-[0.26em] text-(--accent)">Secure Access</p>
             <h1 className="mt-2 text-3xl font-extrabold">Login</h1>
             <p className="mt-2 text-sm text-muted">Sign in to cast or manage votes securely.</p>
 
@@ -76,7 +79,7 @@ export default function LoginPage() {
 
             <p className="mt-4 text-sm text-muted">
               New here?{" "}
-              <Link href="/register" className="font-semibold text-[var(--accent)] hover:underline">
+              <Link href="/register" className="font-semibold text-(--accent) hover:underline">
                 Create an account
               </Link>
             </p>
