@@ -1,17 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Candidate from "@/models/Candidate";
 import Vote from "@/models/Vote";
 
 export async function GET() {
   try {
-    const session = await auth();
-
-    if (!session?.user || session.user.role !== "admin") {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
     await connectDB();
 
     const candidates = await Candidate.find({}).sort({ voteCount: -1 }).lean();

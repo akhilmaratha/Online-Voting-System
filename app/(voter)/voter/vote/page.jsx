@@ -119,7 +119,7 @@ export default function VotePage() {
               <GlassCard>
                 <h3 className="text-xl font-heading">Confirm Vote</h3>
                 <p className="mt-2 text-muted">
-                  Are you sure you want to vote for <span className="font-semibold text-[var(--accent)]">{selected?.name}</span>?
+                  Are you sure you want to vote for <span className="font-semibold text-(--accent)">{selected?.name}</span>?
                 </p>
                 <div className="mt-5 flex justify-end gap-2">
                   <AnimatedButton variant="ghost" onClick={() => setConfirmOpen(false)}>

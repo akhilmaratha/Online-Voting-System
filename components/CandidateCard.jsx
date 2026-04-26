@@ -13,7 +13,7 @@ export default function CandidateCard({ candidate, selected = false, onSelect })
           className={cn(
             "h-full transition-all duration-300",
             selected
-              ? "border-[var(--accent)] shadow-[0_0_20px_color-mix(in_srgb,var(--accent-glow)_30%,transparent)]"
+              ? "text-(--accent) shadow-[0_0_20px_color-mix(in_srgb,var(--accent-glow)_30%,transparent)]"
               : "hover:border-[color-mix(in_srgb,var(--accent)_50%,var(--border))]",
           )}
         >
@@ -27,7 +27,7 @@ export default function CandidateCard({ candidate, selected = false, onSelect })
             />
           </div>
           <h3 className="text-xl font-heading font-bold">{candidate.name}</h3>
-          <p className="mt-1 text-sm font-semibold text-[var(--accent)]">{candidate.party}</p>
+          <p className="mt-1 text-sm font-semibold text-(--accent)">{candidate.party}</p>
           <p className="mt-3 line-clamp-3 text-sm text-muted">{candidate.bio || "No candidate bio available."}</p>
         </GlassCard>
       </button>
