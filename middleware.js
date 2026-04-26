@@ -4,7 +4,10 @@ import { getToken } from "next-auth/jwt";
 const authPages = ["/login", "/register"];
 
 export async function middleware(req) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
   const { pathname } = req.nextUrl;
 
   const isAuthPage = authPages.some((page) => pathname.startsWith(page));
