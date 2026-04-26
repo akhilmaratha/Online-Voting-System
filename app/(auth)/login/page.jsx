@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -12,7 +11,6 @@ import FloatingInput from "@/components/ui/FloatingInput";
 import AnimatedButton from "@/components/ui/AnimatedButton";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,6 +23,7 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
+      callbackUrl: "/voter/dashboard",
     });
 
     setLoading(false);
@@ -35,8 +34,13 @@ export default function LoginPage() {
     }
 
     toast.success("Welcome back.");
-    router.push("/voter/dashboard");
-    router.refresh();
+
+    // Use a full navigation after auth so middleware reads the fresh session cookie in production.
+    const destination =
+      result?.url && typeof window !== "undefined"
+        ? new URL(result.url, window.location.origin).toString()
+        : "/voter/dashboard";
+    window.location.assign(destination);
   };
 
   return (
