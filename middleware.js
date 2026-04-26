@@ -1,33 +1,50 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-export default auth((req) => {
-  const session = req.auth;
+const authPages = ["/login", "/register"];
+
+export async function middleware(req) {
+  const secret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
+  const isSecure = req.nextUrl.protocol === "https:";
+  let token = null;
+
+  if (secret) {
+    try {
+      token = await getToken({
+        req,
+        secret,
+        secureCookie: isSecure,
+      });
+    } catch {
+      token = null;
+    }
+  }
+
   const { pathname } = req.nextUrl;
 
-  const isAuthPage = ["/login", "/register"].some((p) => pathname.startsWith(p));
+  const isAuthPage = authPages.some((p) => pathname.startsWith(p));
   const isVoterPage = pathname.startsWith("/voter");
   const isAdminPage = pathname.startsWith("/admin");
 
-  if (isAuthPage && session) {
-    const url = session.user?.role === "admin" ? "/admin/dashboard" : "/voter/dashboard";
+  if (isAuthPage && token) {
+    const url = token.role === "admin" ? "/admin/dashboard" : "/voter/dashboard";
     return NextResponse.redirect(new URL(url, req.url));
   }
 
-  if ((isVoterPage || isAdminPage) && !session) {
+  if ((isVoterPage || isAdminPage) && !token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  if (isAdminPage && session?.user?.role !== "admin") {
+  if (isAdminPage && token?.role !== "admin") {
     return NextResponse.redirect(new URL("/voter/dashboard", req.url));
   }
 
-  if (isVoterPage && session?.user?.role === "admin") {
+  if (isVoterPage && token?.role === "admin") {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/login", "/register", "/voter/:path*", "/admin/:path*"],
