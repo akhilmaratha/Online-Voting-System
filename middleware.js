@@ -5,8 +5,10 @@ const authPages = ["/login", "/register"];
 
 export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+   // ADD THIS
+   console.log("Cookie header:", req.headers.get("cookie"));
+   console.log("Token result:", token);
   const { pathname } = req.nextUrl;
-  console.log(token);
 
   const isAuthPage = authPages.some((page) => pathname.startsWith(page));
   const isVoterPage = pathname.startsWith("/voter");
