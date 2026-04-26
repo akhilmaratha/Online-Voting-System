@@ -40,7 +40,6 @@ async function getResults() {
 }
 
 export default async function HomePage() {
-  const session = await auth();
   const result = await getResults();
   const chartData = result.candidates || [];
 
@@ -55,7 +54,7 @@ export default async function HomePage() {
           </p>
         </div>
 
-        {!session ? (
+        
           <div className="flex flex-wrap gap-3">
             <Link href="/login">
               <AnimatedButton>Login</AnimatedButton>
@@ -64,7 +63,6 @@ export default async function HomePage() {
               <AnimatedButton variant="ghost">Signup</AnimatedButton>
             </Link>
           </div>
-        ) : null}
       </div>
 
       <GlassCard className="mb-6 border-[color-mix(in_srgb,var(--accent)_35%,var(--border))]">
